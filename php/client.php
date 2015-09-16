@@ -1,12 +1,21 @@
 <?php
-header('Content-Type: text/html; charset=utf-8');
 /**
- * Para requisitar o formulário de pesquisa, coloque o parâmetro `?acao=formulario` no fim da URL.
- * Para requisitar o perfil do pesquisado, coloque o parâmetro `?acao=perfil`no fim da URL.
- * Para executar os testes de unidade, digite no terminal o comando `phpunit clientTest.php`.
+ * Client PHP para o webservice
+ * 
+ * Teste visual `getFormulario()` ...
+ * 
+ *      (abra no navegador) client.php?acao=formulario
+ * 
+ * Teste visual `processar()`...
+ * 
+ *      (abra no navegador) client.php?acao=processar
+ *  
  */
+header('Content-Type: text/html; charset=utf-8');
 
+#
 # Configurações
+#
 $_wsdl         = "http://www.dom.net.br/sisv5/ws/v1.0/WSDL/";
 $_login        = 'seu-login';
 $_senha        = 'sua-senha';
@@ -16,96 +25,60 @@ $_cpf          = "111.222.333-44";
 $_dt_nasc      = "1990-01-02";
 $_email        = "fulano@mail.com";
 $_celular      = "98764-5432";
-$_alternativas = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 41"; # o separador pode ser ', ' ou paenas ','
+$_alternativas = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 41";
 
-class Client{
-    public $login;
-    public $senha;
-    public $nome;
-    public $email;
-    public $sexo;
-    public $dt_nasc;
-    public $cpf;
-    public $celular;
-    public $alternativas;
-    public $wsdl;
+#
+# parâmetros
+#
+$paramsForm = array(
+    'login' => $_login,
+    'senha' => $_senha,
+);
+$paramsProc = array(
+    'login'        => $_login,
+    'senha'        => $_senha,
+    'nome'         => $_nome,
+    'email'        => $_email,
+    'sexo'         => $_sexo,
+    'dt_nasc'      => $_dt_nasc,
+    'cpf'          => $_cpf,
+    'celular'      => $_celular,
+    'alternativas' => $_alternativas
+);
+    
+    
+function exibirPrimeiraRequisicao() {
+    $client   = new SoapClient($_wsdl, array('trace' => false));
+    $response = $client->__soapCall("SDDForm", array($paramsForm));
 
-    public function primeiraRequisicao() {
-        $parametros = array(
-            'login' => $this->login,
-            'senha' => $this->senha
-        );
-        $conexaoSoap = new SoapClient($this->wsdl, array('trace' => true));
-        $resultado = $conexaoSoap->__soapCall("SDDForm", array($parametros));
-
-        $status = (string) $resultado->formulario->status;
-        echo "<p>Status formulário: $status</p>";
-        
-        if ($status == 'Sucesso!') {
-            foreach ($resultado->formulario->instrucoes->frase as $instrucao){
-                echo "<p>$instrucao</p>";
-            }
-
-            foreach ($resultado->formulario->alternativas->alternativa as $alt){
-                echo "<p>$alt->id - $alt->frase</p>";
-            }
-        }
-        return $resultado;
+    echo "<p>Status formulário: {$response->formulario->status}</p>";
+    echo "<br />";
+    foreach ($response->formulario->instrucoes as $instrucao) {
+        echo "<p>{$instrucao->frase}</p>";
     }
-
-    public function segundaRequisicao() {
-        $parametros = array(
-            'login'        => $this->login,
-            'senha'        => $this->senha,
-            'nome'         => $this->nome,
-            'email'        => $this->email,
-            'sexo'         => $this->sexo,
-            'dt_nasc'      => $this->dt_nasc,
-            'cpf'          => $this->cpf,
-            'celular'      => $this->celular,
-            'alternativas' => $this->alternativas
-        );
-        $conexaoSoap = new SoapClient($this->wsdl, array('trace' => true));
-        $resultado = $conexaoSoap->__soapCall("SDDPerf", array($parametros));
-        
-        $status = (string) $resultado->pesquisado->status;
-        echo "<p>Status pesquisado: $status</p>";
-        
-        if ($status == 'Sucesso!') {
-            $codigo = (string) $resultado->pesquisado->codigo;
-            echo "<p>Código: $codigo</p>";
-
-            echo "<h3>Perfil</h3>";
-            foreach ($resultado->pesquisado->perfil->competencia as $alt){
-                echo "<p>$alt->label - $alt->valor</p>";
-            }
-        }
-        return $resultado;
+    echo "<br />";
+    foreach ($response->formulario->alternativas as $alternativa) {
+        echo "<p>{$alternativa->id} - {$alternativa->frase}</p>";
     }
 }
 
-$acao = isset($_GET['acao'])? $_GET['acao'] : null;
+function exibirSegundaRequisicao() {
+    $client = new SoapClient($_wsdl, array('trace' => true));
+    $response   = $client->__soapCall("SDDPerf", array($paramsProc));
+
+    echo "<p>Status pesquisado: {$response->pesquisado->status}</p>";
+    echo "<p>Código: {$response->pesquisado->codigo}</p>";
+    echo "<h3>Perfil</h3>";
+    foreach ($response->pesquisado->perfil->competencia as $alt) {
+        echo "<p>$alt->label - $alt->valor</p>";
+    }
+}
+
+
+$acao = isset($_GET['acao']) ? $_GET['acao'] : null;
 
 if ($acao == "formulario") {
-    $ws = new Client();
-    $ws->login = $_login;
-    $ws->senha = $_senha;
-    $ws->wsdl  = $_wsdl;
-
-    $ws->primeiraRequisicao();
-
-} elseif ($acao == "perfil") {
-    $ws = new Client();
-    $ws->login        = $_login;
-    $ws->senha        = $_senha;
-    $ws->nome         = $_nome;
-    $ws->sexo         = $_sexo;
-    $ws->cpf          = $_cpf;
-    $ws->dt_nasc      = $_dt_nasc;
-    $ws->email        = $_email;
-    $ws->celular      = $_celular;
-    $ws->alternativas = $_alternativas;
-    $ws->wsdl         = $_wsdl;
-
-    $ws->segundaRequisicao();
+    exibirPrimeiraRequisicao();
+} elseif ($acao == "processar") {
+    exibirSegundaRequisicao();
 }
