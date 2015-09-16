@@ -1,13 +1,4 @@
 <?php
-
-/**
- * Client PHP para o webservice
- * 
- * Executando os testes...
- * 
- *      $ phpunit clientTest.php
- * 
- */
 require 'client.php';
 
 class ClientTest extends PHPUnit_Framework_TestCase {
@@ -21,7 +12,7 @@ class ClientTest extends PHPUnit_Framework_TestCase {
 
     public function testSegundaRequisicao() {
         $client = new SoapClient($GLOBALS['_wsdl'], array('trace' => false));
-        $response = $client->__soapCall("SDDPerf", array($GLOBALS['paramsForm']));
+        $response = $client->__soapCall("SDDPerf", array($GLOBALS['paramsProc']));
 
         $this->assertEquals("Sucesso!", $response->pesquisado->status);
     }
