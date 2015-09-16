@@ -1,0 +1,4 @@
+Django==1.7.4
+PyMySQL==0.6.2
+PySimpleSOAP==1.16
+soap2py==1.16

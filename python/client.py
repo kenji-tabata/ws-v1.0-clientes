@@ -1,19 +1,3 @@
-"""
-Client Python para o webservice
-
-Executando os testes...
-
-    $ python client.py
-    
-Teste visual `getFormulario()` ...
-
-    $ python client.py exibir-primeira-requisicao
-
-# Teste visual `processar()`...
-
-    $ python client.py exibir-segunda-requisicao
-
-"""
 import sys
 import unittest
 from pysimplesoap.client import SoapClient
@@ -22,13 +6,13 @@ from pysimplesoap.client import SoapClient
 # Configurações
 #
 _wsdl         = "http://www.dom.net.br/sisv5/ws/v1.0/WSDL/"
-_login        = 'seu-login'
-_senha        = 'sua-senha'
+_login        = 'sua-senha'
+_senha        = '2387'
 _nome         = 'Um nome qualquer'
 _cpf          = '111.222.333-44'
 _sexo         = 'M'
 _dt_nasc      = '1962-08-21'
-_email        = 'fulnao@mail.com'
+_email        = 'fulano@mail.com'
 _celular      = '9876-5432'
 _alternativas = '1, 2, 3, 8, 11, 20, 33, 44, 45, 53, 80'
 
@@ -86,7 +70,7 @@ class WebServiceTest(unittest.TestCase):
 
         print()
         for cada in formulario['alternativas']:
-            print(cada['alternativa']['frase'])
+            print(str(cada['alternativa']['id']) + " - " + cada['alternativa']['frase'])
 
     #
     # exibir processar()
