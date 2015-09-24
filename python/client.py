@@ -1,13 +1,15 @@
 import sys
 import unittest
 from pysimplesoap.client import SoapClient
-
+from random import randint
 #
 # Configurações
 #
 _wsdl         = "http://www.dom.net.br/sisv5/ws/v1.0/WSDL/"
-_login        = 'sua-senha'
-_senha        = '2387'
+_login        = 'seu-login'
+_senha        = 'sua-senha'
+_codigo       =  randint(1, 9999) # Código gerado randomicamente para execução dos testes
+_codigo_fixo  = '123' # Código utilizado para recuperar o laudo do pesquisado, utilizado apenas para testes
 _nome         = 'Um nome qualquer'
 _cpf          = '111.222.333-44'
 _sexo         = 'M'
@@ -26,6 +28,7 @@ paramsForm = {
 paramsProc = {
     'login':        _login,
     'senha':        _senha,
+    'codigo':       _codigo,
     'nome':         _nome,
     'cpf':          _cpf,
     'sexo':         _sexo,
@@ -34,7 +37,11 @@ paramsProc = {
     'celular':      _celular,
     'alternativas': _alternativas,
 }
-
+paramsLaudo = {
+    'login':        _login,
+    'senha':        _senha,
+    'codigo':       _codigo_fixo,
+} 
 
 class WebServiceTest(unittest.TestCase):
     #
@@ -52,6 +59,14 @@ class WebServiceTest(unittest.TestCase):
         client   = SoapClient(wsdl=_wsdl, trace=False)
         response = client.SDDPerf(**paramsProc)
         self.assertEqual(response['pesquisado']['status'], "Sucesso!")
+
+    #
+    # getLaudoSintese
+    #
+    def testTerceiraRequisicao(self):
+        client   = SoapClient(wsdl=_wsdl, trace=False)
+        response = client.SDDLaudoSintese(**paramsLaudo)
+        self.assertEqual(response['laudo']['status'], "Sucesso!")
 
     #
     # exibir getFormulario()
@@ -91,6 +106,34 @@ class WebServiceTest(unittest.TestCase):
             for perfil in pesquisado['perfil']:
                 print(perfil['competencia']['label'] + ": " + str(perfil['competencia']['valor']))
 
+    #
+    # exibir getLaudoSintese()
+    #
+    def exibirTerceiraRequisicao():
+        client   = SoapClient(wsdl=_wsdl, trace=False)
+        response = client.SDDLaudoSintese(**paramsLaudo)
+
+        laudo = response['laudo']
+
+        print(laudo['status'])
+        print()
+
+        if laudo['status'] == "Sucesso!":
+            print("Título: " + laudo['titulo'])
+            print("Descrição: " + laudo['descricao'])
+            print()
+            print("Empresa: " + laudo['empresa'])
+            print("Cargo: " + laudo['cargo'])
+            print()
+            
+            list = ['lideranca', 'comunicacao', 'velocidade', 'detalhe']
+
+            for fator in list:
+                for bloco in laudo['bloco'][fator]:
+                    print(bloco['frase'])
+                print()
+            
+
 
 if __name__ == '__main__':
     if len(sys.argv) >= 2:
@@ -98,8 +141,10 @@ if __name__ == '__main__':
 
         if opcao == "exibir-primeira-requisicao":
             WebServiceTest.exibirPrimeiraRequisicao()
-        elif  opcao == "exibir-segunda-requisicao":
+        elif opcao == "exibir-segunda-requisicao":
             WebServiceTest.exibirSegundaRequisicao()
+        elif opcao == "exibir-terceira-requisicao":
+            WebServiceTest.exibirTerceiraRequisicao()
         else:
             print('ERRO: opção desconhecida!')
     else:
