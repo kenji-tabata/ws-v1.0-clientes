@@ -5,8 +5,10 @@ header('Content-Type: text/html; charset=utf-8');
 # Configurações
 #
 $_wsdl         = "http://www.dom.net.br/sisv5/ws/v1.0/WSDL/";
-$_login        = 'seu-usuario';
+$_login        = 'seu-login';
 $_senha        = 'sua-senha';
+$_codigo       = rand(1, 9999); # Código gerado randomicamente para execução dos testes
+$_codigo_fixo  = '123'; # Código utilizado para recuperar o laudo do pesquisado utilizado apenas para testes
 $_nome         = "Um nome qualquer";
 $_sexo         = "F"; # F ou M
 $_cpf          = "111.222.333-44";
@@ -25,6 +27,7 @@ $paramsForm = array(
 $paramsProc = array(
     'login'        => $_login,
     'senha'        => $_senha,
+    'codigo'       => $_codigo,
     'nome'         => $_nome,
     'email'        => $_email,
     'sexo'         => $_sexo,
@@ -33,8 +36,12 @@ $paramsProc = array(
     'celular'      => $_celular,
     'alternativas' => $_alternativas
 );
-    
-    
+$paramsLaudo = array(
+    'login'  => $_login,
+    'senha'  => $_senha,
+    'codigo' => $_codigo_fixo,
+);
+
 function exibirPrimeiraRequisicao() {
     $client   = new SoapClient($GLOBALS['_wsdl'], array('trace' => false));
     $response = $client->__soapCall("SDDForm", array($GLOBALS['paramsForm']));
@@ -54,8 +61,8 @@ function exibirPrimeiraRequisicao() {
 }
 
 function exibirSegundaRequisicao() {
-    $client = new SoapClient($GLOBALS['_wsdl'], array('trace' => false));
-    $response   = $client->__soapCall("SDDPerf", array($GLOBALS['paramsProc']));
+    $client   = new SoapClient($GLOBALS['_wsdl'], array('trace' => false));
+    $response = $client->__soapCall("SDDPerf", array($GLOBALS['paramsProc']));
 
     echo "<p>Status pesquisado: {$response->pesquisado->status}</p>";
     echo "<p>Código: {$response->pesquisado->codigo}</p>";
@@ -66,6 +73,31 @@ function exibirSegundaRequisicao() {
     }
 }
 
+function exibirTerceiraRequisicao() {
+    $client   = new SoapClient($GLOBALS['_wsdl'], array('trace' => false));
+    $response = $client->__soapCall("SDDLaudoSintese", array($GLOBALS['paramsLaudo']));
+
+    echo "<p>Status pesquisado: {$response->laudo->status}</p>";
+    echo "<p><strong>Título:</strong> {$response->laudo->titulo}</p>";
+    echo "<p>{$response->laudo->descricao}</p>";
+    echo "<p>{$response->laudo->empresa}</p>";
+    echo "<p>{$response->laudo->cargo}</p>";
+    echo "<h3>Resultado</h3>";
+    
+    $list = ['lideranca', 'comunicacao', 'velocidade', 'detalhe'];
+    foreach ($list as $fator){
+        $frases = $response->laudo->bloco->$fator->frase; 
+        echo "<p>";
+        if (is_array($frases)) {
+            foreach ($frases as $frase) {
+                echo "$frase<br/>";
+            }
+        } else {
+            echo $frases;
+        }
+        echo "</p>";
+    }
+}
 
 $acao = isset($_GET['acao']) ? $_GET['acao'] : null;
 
@@ -73,4 +105,6 @@ if ($acao == "formulario") {
     exibirPrimeiraRequisicao();
 } elseif ($acao == "processar") {
     exibirSegundaRequisicao();
+} elseif ($acao == "sintese") {
+    exibirTerceiraRequisicao();
 }

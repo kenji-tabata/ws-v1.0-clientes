@@ -17,4 +17,10 @@ class ClientTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("Sucesso!", $response->pesquisado->status);
     }
 
+    public function testTerceiraRequisicao() {
+        $client = new SoapClient($GLOBALS['_wsdl'], array('trace' => false));
+        $response = $client->__soapCall("SDDLaudoSintese", array($GLOBALS['paramsLaudo']));
+
+        $this->assertEquals("Sucesso!", $response->laudo->status);
+    }
 }
