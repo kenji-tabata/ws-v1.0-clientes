@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="http://www.dom.net.br/sisv5/webservices/" uri="xml-resources/web-service-references/WsClient/wsdl/www.dom.net.br/sisv5/webservices/index.wsdl"/>
+    <system systemId="http://www.consultacpf.com/webservices/test-drive/consultacpf.asmx?WSDL" uri="xml-resources/web-service-references/consultacpf/wsdl/www.consultacpf.com/webservices/test-drive/consultacpf.asmx.wsdl"/>
+    <system systemId="http://www.sistemasagiles.com.ar/simulador/wsfev1/call/soap?WSDL=None" uri="xml-resources/web-service-references/soap_WSDL_None/wsdl/www.sistemasagiles.com.ar/simulador/wsfev1/call/soap.wsdl_none.wsdl"/>
+    <system systemId="http://dom.net.br/sisv5/webservices/" uri="xml-resources/web-service-references/WsClient/wsdl/dom.net.br/sisv5/webservices/index.wsdl"/>
+    <system systemId="http://127.0.0.1:8000/webservices/WSDL" uri="xml-resources/web-service-references/WSDL/wsdl/127.0.0.1_8000/webservices/wsdl/index.xml"/>
+    <system systemId="http://127.0.0.1:8000/webservices/" uri="xml-resources/web-service-references/WsClient/wsdl/127.0.0.1_8000/webservices/index.wsdl"/>
+    <system systemId="http://127.0.0.1:8000/webservices/WSDL/" uri="xml-resources/web-service-references/WsClient/wsdl/127.0.0.1_8000/webservices/wsdl/index.wsdl"/>
+    <system systemId="http://www.dom.net.br/sisv5/webservices/WSDL/" uri="xml-resources/web-service-references/WsClient/wsdl/www.dom.net.br/sisv5/webservices/wsdl/index.wsdl"/>
+    <system systemId="http://www.dom.net.br/sisv5/ws/v1.0/WSDL/" uri="xml-resources/web-service-references/WsClient/wsdl/www.dom.net.br/sisv5/ws/v1.0/wsdl/index.wsdl"/>
+</catalog>
