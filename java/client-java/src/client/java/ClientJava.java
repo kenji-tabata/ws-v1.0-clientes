@@ -156,7 +156,9 @@ public class ClientJava {
                             System.out.println(frase);
                         }
                     }
-                }
+                } else {
+                    System.out.println("Solicitação cancelada: "+respLaudoSin.getStatus());
+                }   break;
                 
             default:
                 System.out.println("Opção inválida");
