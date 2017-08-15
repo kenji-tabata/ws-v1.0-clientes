@@ -8,7 +8,7 @@ $_wsdl         = "http://www.dom.net.br/sisv5/ws/v1.0/WSDL/";
 $_login        = 'seu-login';
 $_senha        = 'sua-senha';
 $_codigo       = rand(1, 9999); # Código gerado randomicamente para execução dos testes
-$_codigo_fixo  = '123'; # Código utilizado para recuperar o laudo do pesquisado utilizado apenas para testes
+$_codigo_fixo  = '1'; # Código utilizado para recuperar o laudo do pesquisado utilizado apenas para testes
 $_nome         = "Um nome qualquer";
 $_sexo         = "F"; # F ou M
 $_cpf          = "111.222.333-44";
@@ -16,7 +16,15 @@ $_dt_nasc      = "1990-01-02";
 $_email        = "fulano@mail.com";
 $_celular      = "98764-5432";
 $_alternativas = "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 41";
-
+$_id_dec       = 1;
+$_eixo_y       = array(
+                    array('id' => 132, 'gap' => 'sub-item-1'),
+                    array('id' => 133, 'gap' => 'sub-item-3'),
+                    array('id' => 134, 'gap' => 'sub-item-1'),
+                    array('id' => 135, 'gap' => 'sub-item-2'),
+                    array('id' => 136, 'gap' => 'n'),
+                    array('id' => 137, 'gap' => ''),
+                );
 #
 # parâmetros
 #
@@ -24,6 +32,7 @@ $paramsForm = array(
     'login' => $_login,
     'senha' => $_senha,
 );
+
 $paramsProc = array(
     'login'        => $_login,
     'senha'        => $_senha,
@@ -36,10 +45,19 @@ $paramsProc = array(
     'celular'      => $_celular,
     'alternativas' => $_alternativas
 );
+
 $paramsLaudo = array(
     'login'  => $_login,
     'senha'  => $_senha,
     'codigo' => $_codigo_fixo,
+);
+
+$paramsPontuarYCandidato = array(
+    'login'  => $_login,
+    'senha'  => $_senha,
+    'codigo' => $_codigo_fixo,
+    'id_dec' => $_id_dec,
+    'eixo_y' => $_eixo_y
 );
 
 function exibirPrimeiraRequisicao() {
@@ -99,6 +117,13 @@ function exibirTerceiraRequisicao() {
     }
 }
 
+function exibirQuartaRequisicao() {
+    $client   = new SoapClient($GLOBALS['_wsdl'], array('trace' => false));
+    $response = $client->__soapCall("SDDPontuarYCandidato", array($GLOBALS['paramsPontuarYCandidato']));
+    echo "<p>Status: {$response->pontua_y->status}</p>";
+
+}
+
 $acao = isset($_GET['acao']) ? $_GET['acao'] : null;
 
 if ($acao == "formulario") {
@@ -107,4 +132,6 @@ if ($acao == "formulario") {
     exibirSegundaRequisicao();
 } elseif ($acao == "sintese") {
     exibirTerceiraRequisicao();
+} elseif ($acao == "pontuar") {
+    exibirQuartaRequisicao();
 }
