@@ -22,8 +22,8 @@ $_eixo_y       = array(
                     array('id' => 2, 'gap' => 'sub-item-3'),
                     array('id' => 3, 'gap' => 'sub-item-1'),
                     array('id' => 4, 'gap' => 'sub-item-2'),
-                    array('id' => 5, 'gap' => 'sub-item-2'),
-                    array('id' => 6, 'gap' => 'sub-item-2'),
+                    array('id' => 5, 'gap' => 'n'),
+                    array('id' => 6, 'gap' => ''),
                 );
 #
 # parâmetros
